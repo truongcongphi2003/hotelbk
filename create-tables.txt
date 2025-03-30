@@ -1,0 +1,91 @@
+CREATE TABLE AdministrativeRegions (
+	Id integer NOT NULL,
+	Name nvarchar(255) NOT NULL,
+	NameEn nvarchar(255) NOT NULL,
+	CodeName nvarchar(255) NULL,
+	CodeNameEn nvarchar(255) NULL,
+	CONSTRAINT administrative_regions_pkey PRIMARY KEY (Id)
+);
+
+
+-- CREATE AdministrativeUnits TABLE
+CREATE TABLE AdministrativeUnits (
+	Id integer NOT NULL,
+	FullName nvarchar(255) NULL,
+	FullNameEn nvarchar(255) NULL,
+	ShortName nvarchar(255) NULL,
+	ShortNameEn nvarchar(255) NULL,
+	CodeName nvarchar(255) NULL,
+	CodeNameEn nvarchar(255) NULL,
+	CONSTRAINT administrative_units_pkey PRIMARY KEY (Id)
+);
+
+
+-- CREATE Provinces TABLE
+CREATE TABLE Provinces (
+	Code nvarchar(20) NOT NULL,
+	Name nvarchar(255) NOT NULL,
+	NameEn nvarchar(255) NULL,
+	FullName nvarchar(255) NOT NULL,
+	FullNameEn nvarchar(255) NULL,
+	CodeName nvarchar(255) NULL,
+	AdministrativeUnitId integer NULL,
+	AdministrativeRegionId integer NULL,
+	CONSTRAINT provinces_pkey PRIMARY KEY (Code)
+);
+
+
+-- Provinces foreign keys
+
+ALTER TABLE Provinces ADD CONSTRAINT provinces_administrative_region_id_fkey FOREIGN KEY (AdministrativeRegionId) REFERENCES AdministrativeRegions(Id);
+ALTER TABLE Provinces ADD CONSTRAINT provinces_administrative_unit_id_fkey FOREIGN KEY (AdministrativeUnitId) REFERENCES AdministrativeUnits(Id);
+
+CREATE INDEX idx_provinces_region ON Provinces(AdministrativeRegionId);
+CREATE INDEX idx_provinces_unit ON Provinces(AdministrativeUnitId);
+
+
+-- CREATE Districts TABLE
+CREATE TABLE Districts (
+	Code nvarchar(20) NOT NULL,
+	Name nvarchar(255) NOT NULL,
+	NameEn nvarchar(255) NULL,
+	FullName nvarchar(255) NULL,
+	FullNameEn nvarchar(255) NULL,
+	CodeName nvarchar(255) NULL,
+	ProvinceCode nvarchar(20) NULL,
+	AdministrativeUnitId integer NULL,
+	CONSTRAINT districts_pkey PRIMARY KEY (Code)
+);
+
+
+-- Districts foreign keys
+
+ALTER TABLE Districts ADD CONSTRAINT districts_administrative_unit_id_fkey FOREIGN KEY (AdministrativeUnitId) REFERENCES AdministrativeUnits(Id);
+ALTER TABLE Districts ADD CONSTRAINT districts_province_code_fkey FOREIGN KEY (ProvinceCode) REFERENCES Provinces(Code);
+
+CREATE INDEX idx_districts_province ON Districts(ProvinceCode);
+CREATE INDEX idx_districts_unit ON Districts(AdministrativeUnitId);
+
+
+
+-- CREATE Wards TABLE
+CREATE TABLE Wards (
+	Code nvarchar(20) NOT NULL,
+	Name nvarchar(255) NOT NULL,
+	NameEn nvarchar(255) NULL,
+	FullName nvarchar(255) NULL,
+	FullNameEn nvarchar(255) NULL,
+	CodeName nvarchar(255) NULL,
+	DistrictCode nvarchar(20) NULL,
+	AdministrativeUnitId integer NULL,
+	CONSTRAINT wards_pkey PRIMARY KEY (Code)
+);
+
+
+-- Wards foreign keys
+
+ALTER TABLE Wards ADD CONSTRAINT wards_administrative_unit_id_fkey FOREIGN KEY (AdministrativeUnitId) REFERENCES AdministrativeUnits(Id);
+ALTER TABLE Wards ADD CONSTRAINT wards_district_code_fkey FOREIGN KEY (DistrictCode) REFERENCES Districts(Code);
+
+CREATE INDEX idx_wards_district ON Wards(DistrictCode);
+CREATE INDEX idx_wards_unit ON Wards(AdministrativeUnitId);

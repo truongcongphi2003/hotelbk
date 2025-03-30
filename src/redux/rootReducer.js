@@ -1,0 +1,15 @@
+import { combineReducers } from 'redux';
+
+import { reducer as authReducer } from './auth';
+import { reducer as crudReducer } from './crud';
+import { reducer as erpReducer } from './erp';
+
+// Combine all reducers.
+
+const rootReducer = combineReducers({
+  auth: authReducer,
+  crud: crudReducer,
+  erp: erpReducer,
+});
+
+export default rootReducer;
